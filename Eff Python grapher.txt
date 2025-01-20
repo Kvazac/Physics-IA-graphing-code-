@@ -1,0 +1,36 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from google.colab import files
+
+# Upload the file
+print("Please upload the Excel file:")
+uploaded = files.upload()
+
+# Get the file name
+file_name = list(uploaded.keys())[0]
+
+# Load the spreadsheet (header=4 skips the first four rows based on your data)
+data = pd.read_excel(file_name, header=4)
+
+# Extract frequency (column A) and efficiency (column K)
+frequency = data['Freq(Hz)']
+efficiency = data['Efficiency']
+
+# Plotting the graph
+plt.figure(figsize=(10, 6))
+plt.plot(frequency, efficiency, marker='.', label='Efficiency')
+
+# Set the x-axis to logarithmic scale
+plt.xscale('log')
+plt.xlim(10, 1e5)
+
+# Set y-axis range from 1 to 100
+plt.ylim(0, 10)
+
+# Add labels and title
+plt.xlabel('Frequency (Hz)', fontsize=12)
+plt.ylabel('Efficiency (%)', fontsize=12)
+plt.title('Transformer Efficiency vs Frequency', fontsize=14)
+plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+plt.legend()
+plt.show()
