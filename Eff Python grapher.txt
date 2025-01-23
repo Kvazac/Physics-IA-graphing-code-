@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from google.colab import files
 
 # Upload the file
@@ -12,20 +13,47 @@ file_name = list(uploaded.keys())[0]
 # Load the spreadsheet (header=4 skips the first four rows based on your data)
 data = pd.read_excel(file_name, header=4)
 
-# Extract frequency (column A) and efficiency (column K)
+# Extract frequency (column A), efficiency (column K), and percentage uncertainty (column O)
 frequency = data['Freq(Hz)']
 efficiency = data['Efficiency']
+percentage_uncertainty = data['Uncertainty (%)']
 
-# Plotting the graph
+# Calculate absolute uncertainty for efficiency
+absolute_uncertainty = efficiency * (percentage_uncertainty / 100)
+
+# Drop rows with missing or invalid values
+valid_data = data.dropna(subset=['Freq(Hz)', 'Efficiency', 'Uncertainty (%)'])
+frequency = valid_data['Freq(Hz)']
+efficiency = valid_data['Efficiency']
+absolute_uncertainty = valid_data['Efficiency'] * (valid_data['Uncertainty (%)'] / 100)
+
+# Calculate upper and lower bounds of the shaded region
+efficiency_upper = efficiency + absolute_uncertainty
+efficiency_lower = efficiency - absolute_uncertainty
+
+# Set Seaborn color palette
+palette = sns.color_palette(["orchid", "mediumpurple"])
+
+# Plot the efficiency line
 plt.figure(figsize=(10, 6))
-plt.plot(frequency, efficiency, marker='.', label='Efficiency')
+plt.plot(frequency, efficiency, marker='.', label='Efficiency', color=palette[1])
+
+# Fill the area between upper and lower bounds
+plt.fill_between(
+    frequency,
+    efficiency_lower,
+    efficiency_upper,
+    color=palette[0],
+    alpha=0.2,
+    label='Uncertainty Range'
+)
 
 # Set the x-axis to logarithmic scale
 plt.xscale('log')
 plt.xlim(10, 1e5)
 
-# Set y-axis range from 1 to 100
-plt.ylim(0, 10)
+# Set y-axis range
+plt.ylim(0, 100)
 
 # Add labels and title
 plt.xlabel('Frequency (Hz)', fontsize=12)
