@@ -31,12 +31,13 @@ absolute_uncertainty = valid_data['Efficiency'] * (valid_data['Uncertainty (%)']
 efficiency_upper = efficiency + absolute_uncertainty
 efficiency_lower = efficiency - absolute_uncertainty
 
-# Set Seaborn color palette
+# Set Seaborn color palette with a darker lavender
 palette = sns.color_palette(["orchid", "mediumpurple"])
 
 # Plot the efficiency line
 plt.figure(figsize=(10, 6))
-plt.plot(frequency, efficiency, marker='.', label='Efficiency', color=palette[1])
+plt.plot(frequency, efficiency, marker='.', markersize=3, label='Efficiency', color=palette[1])
+
 
 # Fill the area between upper and lower bounds
 plt.fill_between(
@@ -44,7 +45,7 @@ plt.fill_between(
     efficiency_lower,
     efficiency_upper,
     color=palette[0],
-    alpha=0.2,
+    alpha=0.8,  # Increased opacity
     label='Uncertainty Range'
 )
 
